@@ -1,0 +1,52 @@
+//// products
+1. id (primary key)
+2. name
+3. price
+4. count
+5. description
+6. category
+7. image
+8. album
+9. status
+
+//// blogs
+1. id (primary key)
+2. title
+3. image
+4. content
+5. date
+6. hour
+7. category
+8. status
+
+
+//// users
+1. id (primary key)
+2. firstname
+3. lastname
+4. username
+5. password
+6. phone
+7. email
+8. city
+9. country
+10. gender
+
+//// comments
+1. id (primary key)
+2. user_ID => (foreign key => id (users))
+3. content_ID => (id (products) | id (blogs))
+3. content_type
+4. category
+5. content
+6. date
+7. hour
+
+//// offs
+1. id (primary key)
+6. product_ID => (foreign key => products)
+2. discount_code
+3. discount_percent
+4. register_date
+5. expire_date
+7. isConfirmed
