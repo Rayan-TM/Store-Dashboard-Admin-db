@@ -118,8 +118,7 @@
               <label for="title" class="form-label">نام مقاله</label>
             </div>
             <div class="form-group">
-              <select id="category" class="form-field" required>
-              </select>
+              <select id="category" class="form-field" required></select>
               <label for="category" class="form-label invisible"
                 >دسته بندی</label
               >
@@ -138,18 +137,8 @@
             </div>
             <button id="btn-search" type="submit">جستجو</button>
           </form>
-          <table id="blogs-table">
-            <tr class="text-sm">
-              <th>شناسه</th>
-              <th>عکس</th>
-              <th>عنوان</th>
-              <th>تاریخ</th>
-              <th>ساعت</th>
-              <th>دسته بندی</th>
-              <th>وضعیت</th>
-              <th>عملیات</th>
-            </tr>
-          </table>
+          <table id="blogs-table"></table>
+          <ul id="page-buttons-container"></ul>
         </div>
       </main>
     </div>
@@ -157,5 +146,6 @@
     <script src="js/header.js"></script>
     <script src="js/filterTable.js"></script>
     <script src="js/blogs.js"></script>
+    <script src="js/pagination.js"></script>
   </body>
 </html>

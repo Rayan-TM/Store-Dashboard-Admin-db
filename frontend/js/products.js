@@ -4,6 +4,7 @@ const filterCategory = document.querySelector("#category");
 const filterStatus = document.querySelector("#status");
 const filterIsAvailable = document.querySelector("#isAvailable");
 const btnSearch = document.querySelector("#btn-search");
+const pageButtonsContainer = document.querySelector("#page-buttons-container");
 
 const productsTable = $.getElementById("products-table");
 let mainProduct = null;
@@ -14,11 +15,13 @@ function getProducts() {
     .then((res) => res.json())
     .then((products) => {
       allProducts = products;
-      generateProducts(products);
+      generateCurrentPageItems(allProducts, 1, generateProducts);
+      generateButtons(pageButtonsContainer, allProducts, generateProducts);
     });
 }
 
 function generateProducts(products) {
+  
   productsTable.innerHTML = "";
   if (products.length) {
     productsTable.insertAdjacentHTML(
@@ -81,7 +84,10 @@ function removeProduct(productID) {
         result.isConfirmed &&
         fetch(`${baseUrl}/products/${productID}`, {
           method: "DELETE",
-        }).then(() => getProducts())
+        }).then(() => {
+          getProducts();
+          detailsAlert.fire({ text: "محصول حذف شد." });
+        })
     );
 }
 

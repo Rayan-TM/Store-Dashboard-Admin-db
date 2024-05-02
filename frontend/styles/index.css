@@ -175,8 +175,20 @@
     @apply absolute top-1/2 left-1/2 -translate-x-1/2 bg-esther text-title px-2 block text-xs rounded-lg opacity-0 transition-all duration-200;
   }
 
-  .colors-container div:hover span{
-    @apply opacity-100 -top-5
+  .colors-container div:hover span {
+    @apply opacity-100 -top-5;
+  }
+
+  #page-buttons-container {
+    @apply flex justify-center items-center my-3;
+  }
+
+  #page-buttons-container li {
+    @apply px-5 py-3 first:rounded-s-full last:rounded-e-full bg-esther text-title;
+  }
+
+  #page-buttons-container li.active {
+    @apply bg-primary text-secondary
   }
 }
 

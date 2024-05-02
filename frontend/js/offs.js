@@ -6,6 +6,7 @@ const filterRegisterDate = document.querySelector("#register-date");
 const filterExpireDate = document.querySelector("#expire-date");
 const filterProduct = document.querySelector("#product");
 const btnSearch = document.querySelector("#btn-search");
+const pageButtonsContainer = document.querySelector("#page-buttons-container");
 
 let allOffs = null;
 
@@ -14,7 +15,8 @@ function getOffs() {
     .then((res) => res.json())
     .then((offs) => {
       allOffs = offs;
-      generateOffs(allOffs);
+      generateCurrentPageItems(allOffs, 1, generateOffs);
+      generateButtons(pageButtonsContainer, allOffs, generateOffs);
     });
 }
 
@@ -87,7 +89,10 @@ function removeOff(offID) {
         result.isConfirmed &&
         fetch(`${baseUrl}/offs/${offID}`, {
           method: "DELETE",
-        }).then(() => getOffs())
+        }).then(() => {
+          getOffs();
+          detailsAlert.fire({ text: "تخفیف حذف شد." });
+        })
     );
 }
 

@@ -13,6 +13,7 @@ const filterPassword = document.querySelector("#password");
 const filterPhone = document.querySelector("#phone");
 const filterEmail = document.querySelector("#email");
 const btnSearch = document.querySelector("#btn-search");
+const pageButtonsContainer = document.querySelector("#page-buttons-container");
 
 let allCities = null;
 let allUsers = null;
@@ -31,7 +32,8 @@ function getUsers() {
     .then((res) => res.json())
     .then((users) => {
       allUsers = users;
-      generateUsers(allUsers);
+      generateCurrentPageItems(allUsers, 1, generateUsers);
+      generateButtons(pageButtonsContainer, allUsers, generateUsers);
     });
 }
 
@@ -116,7 +118,10 @@ function removeUser(userID) {
         result.isConfirmed &&
         fetch(`${baseUrl}/users/${userID}`, {
           method: "DELETE",
-        }).then(() => getUsers())
+        }).then(() => {
+          getUsers()
+          detailsAlert.fire({text: "کاربر حذف شد."})
+        })
     );
 }
 
@@ -149,54 +154,58 @@ async function editUser(user) {
       confirmButtonText: "ویرایش",
       html: `<form class="form-edit form-filter flex flex-wrap gap-3 mt-10">
     <div class="form-group mb-5">
-      <input type="text" class="form-field" id="firstname" value="${
+      <input type="text" class="form-field" id="formFirstname" value="${
         user.firstname
       }"/>
       <span class="input-error" id="firstnameError"></span>
-      <label for="firstname" class="form-label">نام</label>
+      <label for="formFirstname" class="form-label">نام</label>
     </div>
     <div class="form-group mb-5">
-      <input type="text" class="form-field" id="lastname" value="${
+      <input type="text" class="form-field" id="formLastname" value="${
         user.lastname
       }"/>
       <span class="input-error" id="lastnameError"></span>
-      <label for="lastname" class="form-label">نام خانوادگی</label>
+      <label for="formLastname" class="form-label">نام خانوادگی</label>
     </div>
     <div class="form-group mb-5">
-      <input type="text" class="form-field" id="username" value="${
+      <input type="text" class="form-field" id="formUsername" value="${
         user.username
       }"/>
       <span class="input-error" id="usernameError"></span>
-      <label for="username" class="form-label">نام کاربری</label>
+      <label for="formUsername" class="form-label">نام کاربری</label>
     </div>
     <div class="form-group mb-5">
-      <input type="text" class="form-field" id="password" value="${
+      <input type="text" class="form-field" id="formPassword" value="${
         user.password
       }"/>
       <span class="input-error" id="passwordError"></span>
-      <label for="password" class="form-label">رمزعبور</label>
+      <label for="formPassword" class="form-label">رمزعبور</label>
     </div>
     <div class="form-group mb-5">
-      <input type="text" class="form-field" id="phone" value="${user.phone}"/>
+      <input type="text" class="form-field" id="formPhone" value="${
+        user.phone
+      }"/>
       <span class="input-error" id="phoneError"></span>
-      <label for="phone" class="form-label">شماره تماس</label>
+      <label for="formPhone" class="form-label">شماره تماس</label>
     </div>
     <div class="form-group mb-5">
-      <input type="text" class="form-field" id="email" value="${user.email}"/>
+      <input type="text" class="form-field" id="formEmail" value="${
+        user.email
+      }"/>
       <span class="input-error" id="emailError"></span>
-      <label for="email" class="form-label">ایمیل</label>
+      <label for="formEmail" class="form-label">ایمیل</label>
     </div>
     <div class="form-group mb-5">
-      <select id="city" class="form-field" required>
+      <select id="formCity" class="form-field" required>
         <option value="">شهر</option>
         <option value=${user.city} selected>${user.city}</option>
       </select>
       <span class="input-error" id="cityError"></span>
-      <label for="city" class="form-label invisible">شهر</label>
+      <label for="formCity" class="form-label invisible">شهر</label>
     </div>
 
     <div class="form-group mb-5">
-      <select id="province" class="form-field" required onchange=filterCities()>
+      <select id="formProvince" class="form-field" required onchange=filterCities()>
         <option value="">استان</option>
         ${provinces.map(
           (province) =>
@@ -206,11 +215,11 @@ async function editUser(user) {
         )}
       </select>
       <span class="input-error" id="provinceError"></span>
-      <label for="province" class="form-label invisible">استان</label>
+      <label for="formProvince" class="form-label invisible">استان</label>
     </div>
 
     <div class="form-group mb-5">
-      <select id="gender" class="form-field" required>
+      <select id="formGender" class="form-field" required>
         <option value="">جنسیت</option>
         ${["male", "female"].map(
           (gender) =>
@@ -221,7 +230,7 @@ async function editUser(user) {
       </select>
       <span class="input-error" id="genderError"></span>
 
-      <label for="gender" class="form-label invisible">جنسیت</label>
+      <label for="formGender" class="form-label invisible">جنسیت</label>
     </div>
   </form>`,
       didOpen: () => {
@@ -229,6 +238,24 @@ async function editUser(user) {
         checkInputsValidation();
       },
       preConfirm: () => {
+        console.log(formUsername);
+        firstnameError.innerText = validateName(
+          formFirstname.value,
+          "firstname",
+          2
+        );
+        lastnameError.innerText = validateName(
+          formLastname.value,
+          "lastname",
+          4
+        );
+        usernameError.innerText = validateUsername(formUsername.value);
+        passwordError.innerText = validatePassword(formPassword.value, 8);
+        emailError.innerText = validateEmail(formEmail.value);
+        phoneError.innerText = validatePhone(formPhone.value);
+        cityError.innerText = !formCity.value ? "select city" : "";
+        provinceError.innerText = !formProvince.value ? "select province" : "";
+        genderError.innerText = !formGender.value ? "select gender" : "";
         const inputs = [
           lastnameError,
           firstnameError,
@@ -240,19 +267,6 @@ async function editUser(user) {
           provinceError,
           genderError,
         ];
-        firstnameError.innerText = validateName(
-          firstname.value,
-          "firstname",
-          2
-        );
-        lastnameError.innerText = validateName(lastname.value, "lastname", 4);
-        usernameError.innerText = validateUsername(username.value);
-        passwordError.innerText = validatePassword(password.value, 8);
-        emailError.innerText = validateEmail(email.value);
-        phoneError.innerText = validatePhone(phone.value);
-        cityError.innerText = !city.value ? "select city" : "";
-        provinceError.innerText = !province.value ? "select province" : "";
-        genderError.innerText = !gender.value ? "select gender" : "";
         const hasInputErrors = inputs.some((input) => input.innerText !== "");
 
         if (hasInputErrors) {
@@ -263,15 +277,15 @@ async function editUser(user) {
     .then((result) => {
       if (result.isConfirmed) {
         const updatedUser = {
-          city: city.value,
-          gender: gender.value,
-          province: JSON.parse(province.value).name,
-          email: email.value,
-          firstname: firstname.value,
-          lastname: lastname.value,
-          password: password.value,
-          phone: phone.value,
-          username: username.value,
+          city: formCity.value,
+          gender: formGender.value,
+          province: JSON.parse(formProvince.value).name,
+          email: formEmail.value,
+          firstname: formFirstname.value,
+          lastname: formLastname.value,
+          password: formPassword.value,
+          phone: formPhone.value,
+          username: formUsername.value,
         };
         fetch(`${baseUrl}/users/${user.id}`, {
           method: "PUT",
@@ -281,7 +295,10 @@ async function editUser(user) {
           body: JSON.stringify(updatedUser),
         })
           .then((res) => res.json())
-          .then((data) => console.log(data));
+          .then((data) => {
+            getUsers()
+            detailsAlert.fire({text: "کاربر ویرایش شد."})
+          });
       }
     });
 }

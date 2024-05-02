@@ -5,15 +5,7 @@ const filterContent = document.querySelector("#content");
 const filterComment = document.querySelector("#comment");
 const filterDate = document.querySelector("#date");
 const btnSearch = document.querySelector("#btn-search");
-
-console.log(
-  filterID,
-  filterUsername,
-  filterContent,
-  filterComment,
-  filterDate,
-  btnSearch
-);
+const pageButtonsContainer = document.querySelector("#page-buttons-container");
 
 let allComments = null;
 
@@ -22,8 +14,8 @@ function getComments() {
     .then((res) => res.json())
     .then((comments) => {
       allComments = comments;
-
-      generateComments(allComments);
+      generateCurrentPageItems(allComments, 1, generateComments);
+      generateButtons(pageButtonsContainer, allComments, generateComments);
     });
 }
 
@@ -152,7 +144,10 @@ function removeComment(commentID) {
         result.isConfirmed &&
         fetch(`${baseUrl}/comments/${commentID}`, {
           method: "DELETE",
-        }).then(() => getComments())
+        }).then(() => {
+          getComments();
+          detailsAlert.fire({ text: "کامنت حذف شد." });
+        })
     );
 }
 
@@ -182,7 +177,10 @@ function editComment(commentID, commentContent) {
             "Content-Type": "application/json",
           },
           body: JSON.stringify(updatedContent),
-        }).then(() => getComments());
+        }).then(() => {
+          getComments();
+          detailsAlert.fire({ text: "کامنت ویرایش شد." });
+        });
       }
     });
 }
@@ -207,8 +205,10 @@ function filter({ id, username, content, commentValue, date }) {
     .filter((comment) => (id ? comment.id == id : comment))
     .filter((comment) => (username ? comment.user_ID == username : comment))
     .filter((comment) => (content ? comment.content_ID == content : comment))
-    .filter((comment) => (commentValue ? comment.content == commentValue : comment))
+    .filter((comment) =>
+      commentValue ? comment.content == commentValue : comment
+    )
     .filter((comment) => (date ? comment.date == date : comment));
 
-    return filteredItems;
+  return filteredItems;
 }

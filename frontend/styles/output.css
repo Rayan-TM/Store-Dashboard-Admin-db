@@ -1025,6 +1025,38 @@ main h2 {
   opacity: 1;
 }
 
+#page-buttons-container {
+  margin-top: 0.75rem;
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#page-buttons-container li {
+  background-color: var(--color-esther);
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+  color: var(--color-title);
+}
+
+#page-buttons-container li:first-child {
+  border-start-start-radius: 9999px;
+  border-end-start-radius: 9999px;
+}
+
+#page-buttons-container li:last-child {
+  border-start-end-radius: 9999px;
+  border-end-end-radius: 9999px;
+}
+
+#page-buttons-container li.active {
+  background-color: var(--color-primary);
+  color: var(--color-secondary);
+}
+
 .pointer-events-none {
   pointer-events: none;
 }

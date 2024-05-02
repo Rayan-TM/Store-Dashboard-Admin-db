@@ -81,6 +81,12 @@ btnTheme.addEventListener("click", (e) => {
 
 themeItems.forEach((list) =>
   list.addEventListener("click", (e) => {
-    document.documentElement.dataset.theme = e.target.innerText;
+    localStorage.setItem("theme", e.target.innerText);
+    document.documentElement.dataset.theme = localStorage.getItem("theme");
   })
+);
+
+window.addEventListener(
+  "load",
+  () => (document.documentElement.dataset.theme = localStorage.getItem("theme"))
 );

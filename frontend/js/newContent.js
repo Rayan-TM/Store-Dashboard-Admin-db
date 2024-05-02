@@ -15,7 +15,9 @@ const singleUploaderIcon = document.querySelector(".single-upload-icon");
 const singleImageContainer = document.querySelector(".single-image-container");
 const multiImageContainer = document.querySelector(".multi-image-container");
 let singleImage = null;
-let container = null;
+const container = document.createElement("div");
+container.className = "relative group single-img-container";
+let file = null;
 const colorPickerContainer = document.querySelector(".color-picker");
 const colorInput = document.querySelector(".color-input");
 const selectColor = document.querySelector(".select-color");
@@ -44,6 +46,14 @@ function loadContentImage(image) {
   }
 }
 
+function loadMultiImage(image) {
+  output.innerHTML += `
+  <div class="relative group">
+    <img src="${image}" alt="" />
+    <button onclick='removeImage(event)' class="group-hover:flex "><i class="fa-solid fa-xmark"></i></button>
+  </div>`;
+}
+
 async function loadNewContentInputs() {
   if (contentID === null) {
     submitBtn.innerText = "انتشار";
@@ -70,13 +80,7 @@ async function loadNewContentInputs() {
 
       if (albumUrls.length) {
         output.classList.replace("hidden", "flex");
-        albumUrls.forEach(
-          (url) =>
-            (output.innerHTML += `<div class="relative group">
-              <img src="${url}" alt="" />
-              <button onclick='removeImage(event)' class="group-hover:flex "><i class="fa-solid fa-xmark"></i></button>
-            </div>`)
-        );
+        albumUrls.forEach((url) => loadMultiImage(url));
       }
       prevColors = JSON.parse(currentProduct.colors);
       generateColorsInContainer(prevColors);
@@ -157,7 +161,11 @@ function addContent() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(newProduct),
-    }).then(() => location.replace("products.html"));
+    }).then(() => {
+      detailsAlert
+        .fire({ text: "محصول با موفقیت اضافه شد.", icon: "success" })
+        .then(() => location.reload());
+    });
   } else {
     const newBlog = {
       title: title.value || "نامشخص",
@@ -176,7 +184,11 @@ function addContent() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(newBlog),
-    }).then(() => location.replace("blogs.html"));
+    }).then(() => {
+      detailsAlert
+        .fire({ text: "مقاله با موفقیت اضافه شد.", icon: "success" })
+        .then(() => location.reload());
+    });
 
     console.log(newBlog);
   }
@@ -209,7 +221,12 @@ function updateContent() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(updatedProduct),
-    }).then(() => location.replace("products.html"));
+    }).then(() => {
+      detailsAlert.fire({
+        text: "محصول با موفقیت ویرایش شد.",
+        icon: "success",
+      });
+    });
   } else {
     const updatedBlog = {
       title: title.value || "نامشخص",
@@ -226,7 +243,12 @@ function updateContent() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(updatedBlog),
-    }).then(() => location.replace("blogs.html"));
+    }).then(() => {
+      detailsAlert.fire({
+        text: "محصول با موفقیت ویرایش شد.",
+        icon: "success",
+      });
+    });
   }
 }
 
@@ -238,8 +260,6 @@ window.addEventListener("load", () => {
 });
 
 submitBtn.addEventListener("click", () => {
-  container = document.createElement("div");
-  container.className = "relative group single-img-container";
   singleImage = document.querySelector(".single-img-container img");
   if (submitBtn.innerText === "انتشار") {
     addContent();
@@ -347,9 +367,7 @@ function uploadImage(file) {
         const fileUrl = event.target;
         container.innerHTML = "";
 
-        container.innerHTML = `<img src="${fileUrl.result}" alt="" />
-      <button onclick="removeSingleImage()" class="group-hover:flex w-5 h-5 block"><i class="fa-solid fa-xmark"></i></button>`;
-        singleUploaderIcon.replaceWith(container);
+        loadContentImage(fileUrl.result);
       });
       fileReader.readAsDataURL(file);
     } else if (fileSize > 120) {
@@ -363,9 +381,6 @@ function uploadImage(file) {
     alert("دستگاه شما سازگاری لازم برای آپلود فایل را ندارد");
   }
 }
-container = document.createElement("div");
-let file = null;
-container.className = "relative group single-img-container";
 
 const isUserDeviceCompatible = Boolean(
   window.File && window.FileReader && window.FileList && window.Blob
@@ -407,10 +422,7 @@ multiUploader.addEventListener("change", (e) => {
         const reader = new FileReader();
         reader.addEventListener("load", (event) => {
           const picFile = event.target;
-          output.innerHTML += `<div class="relative group">
-            <img src="${picFile.result}" alt="" />
-            <button onclick='removeImage(event)' class="group-hover:flex "><i class="fa-solid fa-xmark"></i></button>
-          </div>`;
+          loadMultiImage(picFile.result);
         });
         reader.readAsDataURL(file);
       }
@@ -421,8 +433,8 @@ multiUploader.addEventListener("change", (e) => {
 });
 
 function removeImage(e) {
-  container = e.target.parentElement.parentElement;
-  output.removeChild(container);
+  const imgContainer = e.target.parentElement.parentElement;
+  output.removeChild(imgContainer);
   if (output.children.length <= 0) {
     output.classList.replace("flex", "hidden");
   }

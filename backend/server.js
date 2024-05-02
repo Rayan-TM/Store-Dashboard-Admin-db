@@ -24,4 +24,4 @@ app.use("/location", locationRoute);
 app.use("/colors", colorsRoute);
 app.use("/category", categoryRoute);
 
-app.listen(4000);
+app.listen(4000); 

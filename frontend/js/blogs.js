@@ -5,6 +5,7 @@ const filterCategory = document.querySelector("#category");
 const filterStatus = document.querySelector("#status");
 const filterDate = document.querySelector("#date");
 const btnSearch = document.querySelector("#btn-search");
+const pageButtonsContainer = document.querySelector("#page-buttons-container");
 
 let allBlogs = null;
 
@@ -13,7 +14,8 @@ function getBlogs() {
     .then((res) => res.json())
     .then((blogs) => {
       allBlogs = blogs;
-      generateBlog(allBlogs);
+      generateCurrentPageItems(allBlogs, 1, generateBlog);
+      generateButtons(pageButtonsContainer, allBlogs, generateBlog);
     });
 }
 
@@ -83,7 +85,10 @@ function removeBlog(blogID) {
         result.isConfirmed &&
         fetch(`${baseUrl}/blogs/${blogID}`, {
           method: "DELETE",
-        }).then(() => getBlogs())
+        }).then(() => {
+          getBlogs();
+          detailsAlert.fire({ text: "مقاله حذف شد." });
+        })
     );
 }
 
