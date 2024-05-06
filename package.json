@@ -4,14 +4,11 @@
   "description": "",
   "main": "tailwind.config.js",
   "scripts": {
-    "start": "npx tailwindcss -i ./frontend/styles/index.css -o ./frontend/styles/output.css --watch"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "devDependencies": {
-    "tailwindcss": "^3.4.1"
-  },
   "dependencies": {
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
