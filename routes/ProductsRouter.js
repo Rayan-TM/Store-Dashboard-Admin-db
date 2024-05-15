@@ -21,7 +21,7 @@ productRoute.post("/", (req, res) => {
 productRoute.put("/:productID", (req, res) => {
   const productID = req.params.productID;
   const body = req.body;
-  const updateProduct = `UPDATE products SET name='${body.name}',price=${body.price},category='${body.category}',description='${body.description}', colors='${body.colors}',image='${body.image}',album='${body.album}' ,status=${body.status},isAvailable=${body.isAvailable}, allowComment=${body.allowComment} WHERE id=${productID}`;
+  const updateProduct = `UPDATE products SET name="${body.name}",price=${body.price},category="${body.category}",description="${body.description}", colors='${body.colors}',image="${body.image}",album="${body.album}" ,status=${body.status},isAvailable=${body.isAvailable}, allowComment=${body.allowComment} WHERE id=${productID}`;
   databaseQueryHandler(updateProduct, res);
 });
 
@@ -30,5 +30,5 @@ productRoute.delete("/:productID", (req, res) => {
   const removeProduct = `DELETE FROM products WHERE id=${productID}`;
   databaseQueryHandler(removeProduct, res);
 });
-
+  
 module.exports = productRoute;
