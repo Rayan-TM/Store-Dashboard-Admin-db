@@ -3,12 +3,25 @@ const { databaseQueryHandler } = require("../utils");
 
 const blogRoute = express.Router();
 
-blogRoute.get("/:blogID?", (req, res) => {
-  const blogID = req.params.blogID;
+blogRoute.get("/:blogUrl?", (req, res) => {
+  const blogUrl = req.params.blogUrl;
   const selectAllBlogs = `SELECT * FROM blogs ${
-    blogID && "WHERE id=" + blogID
+    blogUrl && `WHERE url='${blogUrl}'`
   }`;
   databaseQueryHandler(selectAllBlogs, res);
+});
+
+blogRoute.get("/page/:offset/:limit/:category/:search?", (req, res) => {
+  const limit = req.params.limit;
+  const offset = (req.params.offset - 1) * limit;
+  const category = req.params.category;
+  const search = req.params.search || "";
+
+  const selectBlogsOfPage = `SELECT * FROM blogs WHERE title LIKE '%${search}%' ${
+    category !== "all" ? `AND category = '${category}'` : ""
+  } LIMIT ${limit} OFFSET ${offset}`;
+
+  databaseQueryHandler(selectBlogsOfPage, res);
 });
 
 blogRoute.post("/", (req, res) => {

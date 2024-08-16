@@ -18,6 +18,15 @@ commentRoute.get("/:isProduct?", (req, res) => {
   databaseQueryHandler(selectAllComments, res);
 });
 
+commentRoute.get("/:isProduct/:contentID", (req, res) => {
+  const isProduct = req.params.isProduct;
+  const contentID = req.params.contentID;
+
+  const getAllProductComments = `SELECT comments.content, comments.isReply, comments.reply_ID, comments.date, comments.hour, users.username AS user_ID, products.name as content_ID FROM comments INNER JOIN users ON users.id = comments.user_ID INNER JOIN products ON products.id = comments.content_ID WHERE isProduct = ${isProduct} AND content_ID = ${contentID}`;
+
+  databaseQueryHandler(getAllProductComments, res);
+});
+
 commentRoute.get("/content/:isProduct/:commentID", (req, res) => {
   const isProduct = req.params.isProduct;
   const commentID = req.params.commentID;
