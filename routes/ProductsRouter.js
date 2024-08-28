@@ -46,6 +46,13 @@ productRoute.get(
   }
 );
 
+productRoute.get("/search/:search", (req, res) => {
+  const search = req.params.search;
+
+  const selectSearchedProducts = `SELECT * FROM products WHERE name LIKE '%${search}%'`;
+  databaseQueryHandler(selectSearchedProducts, res);
+});
+
 productRoute.post("/", (req, res) => {
   const body = req.body;
   console.log(body);

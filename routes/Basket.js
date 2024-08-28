@@ -14,19 +14,18 @@ basketRouter.get("/:userID", (req, res) => {
 basketRouter.post("/:userID", (req, res) => {
   const userID = req.params.userID;
   const body = req.body;
-  const insertNewProductToBasket = `INSERT INTO basket VALUES (NULL,${body.productID},${userID},'${body.productImg}','${body.productTitle}',${body.productPrice},'${body.productUrl}',1)`;
+  const insertNewProductToBasket = `INSERT INTO basket VALUES (NULL,${body.productID},${userID},'${body.productImg}','${body.productTitle}',${body.productPrice},'${body.productUrl}',${body.count})`;
   databaseQueryHandler(insertNewProductToBasket, res);
 });
 
-basketRouter.post("/:userID/:productID/:action", (req, res) => {
-  const userID = req.params.userID;
-  const productID = req.params.productID;
-  const action = req.params.action;
+basketRouter.post("/:userID/:productID/:action/:count", (req, res) => {
+  const { userID, productID, action, count } = req.params;
 
   const increaseProductCount = `UPDATE basket SET count = count ${
     action == 1 ? "+" : "-"
-  } 1 WHERE userID = ${userID} AND productID = ${productID}`;
+  } ${count} WHERE userID = ${userID} AND productID = ${productID}`;
 
+  console.log('test', increaseProductCount)
   databaseQueryHandler(increaseProductCount, res);
 });
 

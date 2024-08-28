@@ -24,6 +24,13 @@ blogRoute.get("/page/:offset/:limit/:category/:search?", (req, res) => {
   databaseQueryHandler(selectBlogsOfPage, res);
 });
 
+blogRoute.get("/search/:search", (req, res) => {
+  const search = req.params.search;
+
+  const selectSearchedBlogs = `SELECT * FROM blogs WHERE title LIKE '%${search}%'`;
+  databaseQueryHandler(selectSearchedBlogs, res);
+});
+
 blogRoute.post("/", (req, res) => {
   const body = req.body;
   const insertBlog = `INSERT INTO blogs VALUES (NULL,'${body.title}','${body.image}','${body.content}','${body.date}','${body.hour}','${body.category}', ${body.status}, ${body.allowComment})`;
